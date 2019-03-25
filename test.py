@@ -19,7 +19,7 @@ driver.get("http://www.python.org")
 assert "Python" in driver.title
 #Finds elements by key
 #elem = driver.find_element_by_name("q")
-elem = driver.find_element_by_name("Python Community")
+elem = driver.find_element_by_id("submit")
 elem.click()
 time.sleep(3)
 '''
