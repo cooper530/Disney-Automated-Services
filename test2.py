@@ -10,7 +10,7 @@ current_month = d.month
 password = "mmc4four"
 
 def click_locate(image):
-    location = pyautogui.locateCenterOnScreen("Images/" + image, grayscale=True)
+    location = pyautogui.locateCenterOnScreen("Images/" + image)
     pyautogui.click(location)
 
 '''
@@ -72,9 +72,9 @@ time.sleep(2)
 pyautogui.scroll(-500)
 for i in range(4):
     time.sleep(2)
+    pyautogui.scroll(-1000)
     try:
         click_locate(str(ride) + ".PNG")
     except TypeError:
         print ("Did not find ride, trying again...")
-        pyautogui.scroll(-1200)
 driver.close()
