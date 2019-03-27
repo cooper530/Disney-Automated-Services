@@ -69,7 +69,7 @@ click_locate(str(park) + ".PNG")
 time.sleep(2)
 
 #Ride screen
-pyautogui.scroll(-500)
+pyautogui.scroll(-100)
 for i in range(4):
     time.sleep(2)
     pyautogui.scroll(-1000)
