@@ -3,6 +3,7 @@ import pyautogui
 import keyboard
 import calendar
 from selenium import webdriver
+from selenium import common
 import datetime
 
 d = datetime.date.today()
@@ -46,35 +47,40 @@ username.send_keys("mmc.4@comcast.net")
 pswd.send_keys(password)
 submit.click()
 time.sleep(5)
-
-#Select Party Page
-click_locate("select_all.PNG")
-time.sleep(.5)
-pyautogui.scroll(-100)
-time.sleep(.25)
-click_locate("next.PNG")
-time.sleep(2)
-
-#Month Screen
-for i in range(month_click):
-    click_locate("front_arrow.PNG")
-time.sleep(.5)
-click_locate(str(day) + ".PNG")
-
-#Park Screen
-time.sleep(2.25)
-pyautogui.scroll(-500)
-time.sleep(.5)
-click_locate(str(park) + ".PNG")
-time.sleep(2)
-
-#Ride screen
-pyautogui.scroll(-100)
-for i in range(4):
+try:
+    #Select Party Page
+    pyautogui.scroll(-200)
+    click_locate("select_all.PNG")
+    time.sleep(.5)
+    time.sleep(.25)
+    click_locate("next.PNG")
     time.sleep(2)
-    pyautogui.scroll(-1000)
-    try:
-        click_locate(str(ride) + ".PNG")
-    except TypeError:
-        print ("Did not find ride, trying again...")
-driver.close()
+
+    #Month Screen
+    for i in range(month_click):
+        click_locate("front_arrow.PNG")
+    time.sleep(.5)
+    click_locate(str(day) + ".PNG")
+
+    #Park Screen
+    time.sleep(2.25)
+    pyautogui.scroll(-500)
+    time.sleep(.5)
+    click_locate(str(park) + ".PNG")
+    time.sleep(2)
+
+    #Ride screen
+    pyautogui.scroll(-100)
+    for i in range(4):
+        time.sleep(2)
+        pyautogui.scroll(-1000)
+        try:
+            click_locate(str(ride) + ".PNG")
+        except TypeError:
+            print ("Did not find ride, trying again...")
+except common.exceptions.WebDriverException:
+    print("Web Browser was closed unexpectedly!")
+except TypeError:
+    print("Image not found!")
+    driver.close()
+
