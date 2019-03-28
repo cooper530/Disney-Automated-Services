@@ -50,7 +50,9 @@ time.sleep(5)
 try:
     #Select Party Page
     pyautogui.scroll(-200)
-    click_locate("select_all.PNG")
+    #click_locate("select_all.PNG")
+    select_all = driver.find_element_by_class_name("linkBox")
+    select_all.click()
     time.sleep(.5)
     time.sleep(.25)
     click_locate("next.PNG")
@@ -78,8 +80,9 @@ try:
             click_locate(str(ride) + ".PNG")
         except TypeError:
             print ("Did not find ride, trying again...")
-except common.exceptions.WebDriverException:
-    print("Web Browser was closed unexpectedly!")
+#except common.exceptions.WebDriverException:
+    #print("Web Browser was closed unexpectedly!")
+    driver.close()
 except TypeError:
     print("Image not found!")
     driver.close()
