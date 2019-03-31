@@ -131,7 +131,7 @@ try:
             ride_time = list(map(str, ride_time))
             #FIGURE OUT HOW TO CLICK WEBELEMENT WHEN IT WAS CONVERTED TO STRING
             close_time = takeClosest(ride_time, input_time)
-            close_time.click()
+            print(close_time)
             # Confirm Time Selection (DO NOT CHANGE)
             confirm_selection = driver.find_element_by_css_selector("div.ng-scope.button.confirm.tertiary")
             confirm_selection.click()
