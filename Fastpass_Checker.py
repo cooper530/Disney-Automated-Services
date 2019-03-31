@@ -1,18 +1,13 @@
 import time
-import pyautogui
-import keyboard
-import calendar
 from selenium import webdriver
 from selenium import common
 import datetime
+from bisect import bisect_left
 
 d = datetime.date.today()
 current_month = d.month
 password = "mmc4four"
 
-def click_locate(image):
-    location = pyautogui.locateCenterOnScreen("Images/" + image)
-    pyautogui.click(location)
 def get_text_excluding_children(driver, element):
     return driver.execute_script("""
     var parent = arguments[0];
@@ -25,6 +20,23 @@ def get_text_excluding_children(driver, element):
     }
     return ret;
     """, element)
+def takeClosest(myList, myNumber):
+    """
+    Assumes myList is sorted. Returns closest value to myNumber.
+
+    If two numbers are equally close, return the smallest number.
+    """
+    pos = bisect_left(myList, myNumber)
+    if pos == 0:
+        return myList[0]
+    if pos == len(myList):
+        return myList[-1]
+    before = myList[pos - 1]
+    after = myList[pos]
+    if after - myNumber < myNumber - before:
+       return after
+    else:
+       return before
 
 '''
 #INPUTS
@@ -32,22 +44,23 @@ month = int(input("Enter desired month (numerical form): "))
 day = int(input("Enter desired day (numerical form): "))
 park = input("Enter park (mk, epcot, ak, hws): ")
 ride = input("Enter ride specified: ")
-month_click = month - current_month
 '''
+
 month = 4
 day = 3
 park = "hws"
-ride = "rock_and_roller_coaster"
+ride = "Star Tours – The Adventures Continue"
+input_time = "4:30"
 
-month_click = month - current_month
+
 #Finds what day of the week the day is
-week_day = datetime.date(2019, month, day).isoweekday()
+month_click = month - current_month
 
-
-driver = webdriver.Chrome()
 #What website to access
+driver = webdriver.Chrome()
 driver.get("https://disneyworld.disney.go.com/fastpass-plus/select-party/")
-driver.maximize_window()
+#driver.maximize_window()
+time.sleep(1)
 
 #Finds elements by key
 username = driver.find_element_by_name("username")
@@ -71,9 +84,15 @@ try:
     front_arrow = driver.find_element_by_css_selector("span.next-month")
     for i in range(month_click):
         front_arrow.click()
-    time.sleep(.25)
-    pyautogui.click(934, 351)
-    #click_locate(str(day) + ".PNG")
+        time.sleep(.25)
+
+    date_calender = driver.find_elements_by_css_selector("span.day.ng-binding.ng-scope")
+    for i in date_calender:
+        date_actual = get_text_excluding_children(driver, i)
+        if date_actual == str(day):
+            i.click()
+            print("Date identified")
+            break
 
     #Park Screen
     time.sleep(2)
@@ -89,29 +108,42 @@ try:
     time.sleep(5)
 
     #Ride screen
-    pyautogui.scroll(-100)
-    '''
-    for i in range(4):
-        time.sleep(2)
-        pyautogui.scroll(-1000)
-        try:
-            click_locate(str(ride) + ".PNG")
-        except TypeError:
-            print ("Did not find ride, trying again...")
-    '''
-    ride_type = driver.find_elements_by_css_selector("div.name.ng-binding")
-    for i in ride_type:
-        name_actual = get_text_excluding_children(driver, ride_type[i])
-        print (name_actual)
-        '''
-        if name_actual == ride:
-            ride_type[i].click()
-            print ("Found!")
-        else:
-            print ("Not yet!")
-            continue
-        '''
+    for j in range(5):
+        ride_type = driver.find_elements_by_css_selector("div.name.ng-binding")
+        for i in ride_type:
+            name_actual = get_text_excluding_children(driver, i)
+            if name_actual == ride:
+                i.click()
+                print ("Attraction Identified")
+                break
+        time.sleep(3)
 
+        #Find and select the time of the ride
+        ride_time = driver.find_elements_by_css_selector("span.hour.ng-binding")
+        try:
+            for i in ride_time:
+                time_actual = get_text_excluding_children(driver, i)
+                if time_actual == input_time:
+                    i.click()
+                    print ("Time Identified")
+                    break
+            time.sleep(2)
+            ride_time = list(map(str, ride_time))
+            #FIGURE OUT HOW TO CLICK WEBELEMENT WHEN IT WAS CONVERTED TO STRING
+            close_time = takeClosest(ride_time, input_time)
+            close_time.click()
+            # Confirm Time Selection (DO NOT CHANGE)
+            confirm_selection = driver.find_element_by_css_selector("div.ng-scope.button.confirm.tertiary")
+            confirm_selection.click()
+            time.sleep(5)
+        except common.exceptions.NoSuchElementException:
+            print("Time not found!")
+            driver.back()
+            time.sleep(2)
+
+    time.sleep(20)
+    driver.close()
+#
 except common.exceptions.WebDriverException:
     print("Web Browser was closed unexpectedly!")
     driver.close()
