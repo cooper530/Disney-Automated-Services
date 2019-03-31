@@ -35,7 +35,7 @@ week_day = datetime.date(2019, month, day).isoweekday()
 driver = webdriver.Chrome()
 #What website to access
 driver.get("https://disneyworld.disney.go.com/fastpass-plus/select-party/")
-time.sleep(2)
+driver.maximize_window()
 
 #Finds elements by key
 username = driver.find_element_by_name("username")
@@ -49,12 +49,8 @@ submit.click()
 time.sleep(5)
 try:
     #Select Party Page
-    pyautogui.scroll(-200)
-    #click_locate("select_all.PNG")
-    select_all = driver.find_element_by_class_name("linkBox")
-    select_all.click()
-    time.sleep(.5)
-    time.sleep(.25)
+    pyautogui.click(366, 531)
+    time.sleep(1)
     click_locate("next.PNG")
     time.sleep(2)
 
