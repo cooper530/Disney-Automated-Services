@@ -51,7 +51,9 @@ try:
     #Select Party Page
     pyautogui.click(366, 531)
     time.sleep(1)
-    click_locate("next.PNG")
+    next = driver.find_element_by_css_selector("div.ng-scope.button.next.primary")
+    print (next.location)
+    #click_locate("next.PNG")
     time.sleep(2)
 
     #Month Screen
