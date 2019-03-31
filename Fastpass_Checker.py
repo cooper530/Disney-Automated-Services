@@ -13,6 +13,18 @@ password = "mmc4four"
 def click_locate(image):
     location = pyautogui.locateCenterOnScreen("Images/" + image)
     pyautogui.click(location)
+def get_text_excluding_children(driver, element):
+    return driver.execute_script("""
+    var parent = arguments[0];
+    var child = parent.firstChild;
+    var ret = "";
+    while(child) {
+        if (child.nodeType === Node.TEXT_NODE)
+            ret += child.textContent;
+        child = child.nextSibling;
+    }
+    return ret;
+    """, element)
 
 '''
 #INPUTS
@@ -49,28 +61,36 @@ submit.click()
 time.sleep(5)
 try:
     #Select Party Page
-    pyautogui.click(366, 531)
-    time.sleep(1)
+    select_all = driver.find_element_by_css_selector("div.link.selectAll.clickable.ng-isolate-scope")
+    select_all.click()
     next = driver.find_element_by_css_selector("div.ng-scope.button.next.primary")
-    print (next.location)
-    #click_locate("next.PNG")
+    next.click()
     time.sleep(2)
 
     #Month Screen
+    front_arrow = driver.find_element_by_css_selector("span.next-month")
     for i in range(month_click):
-        click_locate("front_arrow.PNG")
-    time.sleep(.5)
-    click_locate(str(day) + ".PNG")
+        front_arrow.click()
+    time.sleep(.25)
+    pyautogui.click(934, 351)
+    #click_locate(str(day) + ".PNG")
 
     #Park Screen
-    time.sleep(2.25)
-    pyautogui.scroll(-500)
-    time.sleep(.5)
-    click_locate(str(park) + ".PNG")
     time.sleep(2)
+    park_find = driver.find_elements_by_css_selector("div.park.ng-scope")
+    if (park == "mk"):
+        park_find[0].click()
+    elif (park == "epcot"):
+        park_find[1].click()
+    elif (park == "hws"):
+        park_find[2].click()
+    elif (park == "ak"):
+        park_find[3].click()
+    time.sleep(5)
 
     #Ride screen
     pyautogui.scroll(-100)
+    '''
     for i in range(4):
         time.sleep(2)
         pyautogui.scroll(-1000)
@@ -78,10 +98,20 @@ try:
             click_locate(str(ride) + ".PNG")
         except TypeError:
             print ("Did not find ride, trying again...")
-#except common.exceptions.WebDriverException:
-    #print("Web Browser was closed unexpectedly!")
-    driver.close()
-except TypeError:
-    print("Image not found!")
-    driver.close()
+    '''
+    ride_type = driver.find_elements_by_css_selector("div.name.ng-binding")
+    for i in ride_type:
+        name_actual = get_text_excluding_children(driver, ride_type[i])
+        print (name_actual)
+        '''
+        if name_actual == ride:
+            ride_type[i].click()
+            print ("Found!")
+        else:
+            print ("Not yet!")
+            continue
+        '''
 
+except common.exceptions.WebDriverException:
+    print("Web Browser was closed unexpectedly!")
+    driver.close()
