@@ -1,4 +1,5 @@
 import time
+from Fastpass_Information import *
 from selenium import webdriver
 from selenium import common
 import datetime
@@ -45,13 +46,6 @@ day = int(input("Enter desired day (numerical form): "))
 park = input("Enter park (mk, epcot, ak, hws): ")
 ride = input("Enter ride specified: ")
 '''
-
-month = 4
-day = 3
-park = "hws"
-ride = "Star Tours – The Adventures Continue"
-input_time = "4:30"
-
 
 #Finds what day of the week the day is
 month_click = month - current_month
@@ -128,14 +122,20 @@ try:
                     print ("Time Identified")
                     break
             time.sleep(2)
-            ride_time = list(map(str, ride_time))
+            ride_time_str = list(map(str,ride_time))
             #FIGURE OUT HOW TO CLICK WEBELEMENT WHEN IT WAS CONVERTED TO STRING
-            close_time = takeClosest(ride_time, input_time)
-            print(close_time)
+            close_time = takeClosest(ride_time_str, input_time)
+
+            for i in ride_time:
+                if (i == close_time):
+                    i.click()
+                    print ("Alternate Time Identified")
+                    break
             # Confirm Time Selection (DO NOT CHANGE)
             confirm_selection = driver.find_element_by_css_selector("div.ng-scope.button.confirm.tertiary")
             confirm_selection.click()
             time.sleep(5)
+        #
         except common.exceptions.NoSuchElementException:
             print("Time not found!")
             driver.back()
