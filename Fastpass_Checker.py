@@ -38,6 +38,9 @@ def takeClosest(myList, myNumber):
        return after
     else:
        return before
+def timeConversion(example):
+    (h, m) = example.split(':')
+    return int(h) * 60 + int(m)
 
 '''
 #INPUTS
@@ -89,7 +92,7 @@ try:
             break
 
     #Park Screen
-    time.sleep(2)
+    time.sleep(2.25)
     park_find = driver.find_elements_by_css_selector("div.park.ng-scope")
     if (park == "mk"):
         park_find[0].click()
@@ -102,7 +105,7 @@ try:
     time.sleep(5)
 
     #Ride screen
-    for j in range(5):
+    for j in range(cycle_time):
         ride_type = driver.find_elements_by_css_selector("div.name.ng-binding")
         for i in ride_type:
             name_actual = get_text_excluding_children(driver, i)
@@ -123,14 +126,31 @@ try:
                     break
             time.sleep(2)
             ride_time_str = list(map(str,ride_time))
-            #FIGURE OUT HOW TO CLICK WEBELEMENT WHEN IT WAS CONVERTED TO STRING
-            close_time = takeClosest(ride_time_str, input_time)
+            #print (ride_time_str)
 
+            #Converts all the times into minutes
+            ride_time_actual = []
             for i in ride_time:
-                if (i == close_time):
+                converted = get_text_excluding_children(driver, i)
+                result = timeConversion(converted)
+                ride_time_actual.append(result)
+            #print (ride_time_actual)
+
+
+            #Finds the closest time to the actual time requested
+            close_time = takeClosest(ride_time_actual, input_time)
+            print ("Closest time:" + str(close_time))
+
+            # Searches for alternate time
+            for i in ride_time:
+                time_test = get_text_excluding_children(driver, i)
+                result_time = timeConversion(time_test)
+                if (result_time == close_time):
                     i.click()
                     print ("Alternate Time Identified")
                     break
+            time.sleep(1)
+
             # Confirm Time Selection (DO NOT CHANGE)
             confirm_selection = driver.find_element_by_css_selector("div.ng-scope.button.confirm.tertiary")
             confirm_selection.click()
@@ -140,10 +160,10 @@ try:
             print("Time not found!")
             driver.back()
             time.sleep(2)
-
-    time.sleep(20)
+    print("Completed repeating cycle!")
     driver.close()
-#
+
+#common.exceptions.WebDriverException
 except common.exceptions.WebDriverException:
     print("Web Browser was closed unexpectedly!")
     driver.close()
