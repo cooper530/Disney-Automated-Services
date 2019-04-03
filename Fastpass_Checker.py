@@ -129,10 +129,13 @@ try:
             #print (ride_time_str)
 
             #Converts all the times into minutes
-            ride_time_actual = []
+            ride_time_actual = []\
+            #FIND OUT HOW TO FIND AM/PM THROUGH DISNEY SECTION
             for i in ride_time:
                 converted = get_text_excluding_children(driver, i)
-                result = timeConversion(converted)
+                converted = converted +
+                military = convert_to_24(converted)
+                result = timeConversion(military)
                 ride_time_actual.append(result)
             #print (ride_time_actual)
 
