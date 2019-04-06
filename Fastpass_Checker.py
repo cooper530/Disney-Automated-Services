@@ -41,6 +41,9 @@ def takeClosest(myList, myNumber):
 def timeConversion(example):
     (h, m) = example.split(':')
     return int(h) * 60 + int(m)
+def confirmTime():
+    confirm_selection = driver.find_element_by_css_selector("div.ng-scope.button.confirm.tertiary")
+    confirm_selection.click()
 
 '''
 #INPUTS
@@ -57,7 +60,7 @@ month_click = month - current_month
 driver = webdriver.Chrome()
 driver.get("https://disneyworld.disney.go.com/fastpass-plus/select-party/")
 #driver.maximize_window()
-time.sleep(1)
+time.sleep(2)
 
 #Finds elements by key
 username = driver.find_element_by_name("username")
@@ -104,8 +107,10 @@ try:
         park_find[3].click()
     time.sleep(5)
 
-    #Ride screen
+    #BEGIN CYCLE TIME
     for j in range(cycle_time):
+        print("Beginning analysis")
+        # Ride screen
         ride_type = driver.find_elements_by_css_selector("div.name.ng-binding")
         for i in ride_type:
             name_actual = get_text_excluding_children(driver, i)
@@ -117,57 +122,96 @@ try:
 
         #Find and select the time of the ride
         ride_time = driver.find_elements_by_css_selector("span.hour.ng-binding")
-        try:
-            for i in ride_time:
-                time_actual = get_text_excluding_children(driver, i)
-                if time_actual == input_time:
-                    i.click()
-                    print ("Time Identified")
-                    break
-            time.sleep(2)
-            ride_time_str = list(map(str,ride_time))
-            #print (ride_time_str)
+        am_or_pm = driver.find_elements_by_css_selector("span.ampm.ng-binding")
 
-            #Converts all the times into minutes
+        try:
+
+            ride_time_str = list(map(str, ride_time))
+            #print(ride_time_str)
+            #TIME OF DAYS
+            time_of_day = []
+            for i in am_or_pm:
+                ams_pms = get_text_excluding_children(driver, i)
+                time_of_day.append(ams_pms)
+            print(time_of_day)
+
+            # Converts all the times into minutes
             ride_time_actual = []
-            #FIND OUT HOW TO FIND AM/PM THROUGH DISNEY SECTION
             for i in ride_time:
                 converted = get_text_excluding_children(driver, i)
-                print(converted)
-                converted = converted + "AM"
-                military = convert_to_24(converted)
+                ride_time_actual.append(converted)
+            print(ride_time_actual)
+            #Completes the for loop process, by combining the time of day with the ride times into one final list
+            final_times_list = []
+            for i in range(len(ride_time)):
+                together_time = ride_time_actual[i] + time_of_day[i]
+                military = convert_to_24(together_time)
                 result = timeConversion(military)
-                ride_time_actual.append(result)
-            print (ride_time_actual)
+                final_times_list.append(result)
+            print (final_times_list)
 
+            # For loop to test if requested time is found (As input)
+            for i in range(len(final_times_list)):
+                if (final_times_list[i] == input_time):
+                    ride_time[i].click()
+                    print("Exact time identified!")
+                    time.sleep(1)
+                    confirmTime()
+                    time.sleep(5)
+                    #Ends program
+                    driver.close()
+                    quit()
 
             #Finds the closest time to the actual time requested
-            close_time = takeClosest(ride_time_actual, input_time)
-            print ("Closest time:" + str(close_time))
+            close_time = takeClosest(final_times_list, input_time)
+            print("Close time: " + str(close_time))
+            #print ("Closest time:" + str(close_time))
 
             # Searches for alternate time
-            for i in ride_time:
-                time_test = get_text_excluding_children(driver, i)
-                result_time = timeConversion(time_test)
-                if (result_time == close_time):
-                    i.click()
+            for i in range(len(final_times_list)):
+                if (final_times_list[i] == close_time):
+                    ride_time[i].click()
                     print ("Alternate Time Identified")
                     break
             time.sleep(1)
 
             # Confirm Time Selection (DO NOT CHANGE)
-            confirm_selection = driver.find_element_by_css_selector("div.ng-scope.button.confirm.tertiary")
-            confirm_selection.click()
+            confirmTime()
+            time.sleep(3)
+
+            #Modify loop
+            no_thanks = driver.find_element_by_css_selector("div.ng-scope.button.next.primary")
+            no_thanks.click()
             time.sleep(5)
+
+            #View details and modify section
+            view_details = driver.find_element_by_css_selector("span.link.viewDetailLink.ng-scope")
+            view_details.click()
+            time.sleep(.5)
+            modify = driver.find_element_by_css_selector("div.icon.edit.ng-scope.large")
+            modify.click()
+            time.sleep(1)
+            select_all_modify = driver.find_element_by_css_selector("div.link.selectAll.clickable.ng-isolate-scope")
+            next_modify = driver.find_element_by_css_selector("div.ng-scope.button.next.primary")
+            select_all_modify.click()
+            next_modify.click()
+            time.sleep(1)
+            #Finding ride times again
+            view_more_times = driver.find_element_by_css_selector("div.clickable.ng-isolate-scope")
+            view_more_times.click()
+            time.sleep(5)
+
         #
         except common.exceptions.NoSuchElementException:
             print("Time not found!")
             driver.back()
             time.sleep(2)
+
+        print("Cycle " + str(j + 1) + "/" + str(cycle_time) + " completed!")
     print("Completed repeating cycle!")
     driver.close()
 
 #common.exceptions.WebDriverException
-except common.exceptions.WebDriverException:
+except TypeError:
     print("Web Browser was closed unexpectedly!")
     driver.close()

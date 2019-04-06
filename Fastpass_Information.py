@@ -1,9 +1,9 @@
 import time
 month = 4
-day = 3
+day = 17
 park = "hws"
-ride = "Muppet*Vision 3D"
-input_time = '01:40PM'
+ride = "Toy Story Mania!"
+input_time = '7:35PM'
 cycle_time = 5
 
 def convert_to_24(time):
@@ -25,4 +25,4 @@ input_time = convert_to_24(input_time)
 
 (h, m) = input_time.split(':')
 input_time = int(h) * 60 + int(m)
-print(input_time)
+#print(input_time)
