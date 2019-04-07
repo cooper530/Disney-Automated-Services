@@ -203,19 +203,26 @@ try:
             #Finding ride times again
             view_more_times = driver.find_element_by_css_selector("div.clickable.ng-isolate-scope")
             view_more_times.click()
-            time.sleep(5)
+            time.sleep(4)
 
         #common.exceptions.NoSuchElementException
         except IndexError:
             print("Times are not available!")
             driver.back()
-            time.sleep(4)
+            time.sleep(2)
 
         print("Cycle " + str(j + 1) + "/" + str(cycle_time) + " completed!")
     print("Completed repeating cycle!")
+
+    start_over = driver.find_element_by_css_selector("div.ng-scope.button.startOver.secondary")
+    start_over.click()
+    time.sleep(2)
+    arrival_time = driver.find_element_by_css_selector("div.arrivalItemTime.one")
+    converted_arrival_time = get_text_excluding_children(driver, arrival_time)
+    print("Arrive between: " + converted_arrival_time)
     driver.close()
 
 #common.exceptions.WebDriverException
-except common.exceptions.WebDriverException:
+except TypeError:
     print("Web Browser was closed unexpectedly!")
     driver.close()
