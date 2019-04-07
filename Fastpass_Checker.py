@@ -116,7 +116,6 @@ try:
         ride_type = driver.find_elements_by_css_selector("div.name.ng-binding")
         for i in ride_type:
             name_actual = get_text_excluding_children(driver, i)
-            print(name_actual)
             if name_actual == ride:
                 i.click()
                 print ("Attraction Identified")
@@ -136,14 +135,15 @@ try:
             for i in am_or_pm:
                 ams_pms = get_text_excluding_children(driver, i)
                 time_of_day.append(ams_pms)
-            print(time_of_day)
+            #print(time_of_day)
 
             # Converts all the times into minutes
             ride_time_actual = []
             for i in ride_time:
                 converted = get_text_excluding_children(driver, i)
                 ride_time_actual.append(converted)
-            print(ride_time_actual)
+            #print(ride_time_actual)
+
             #Completes the for loop process, by combining the time of day with the ride times into one final list
             final_times_list = []
             for i in range(len(ride_time)):
@@ -151,16 +151,16 @@ try:
                 military = convert_to_24(together_time)
                 result = timeConversion(military)
                 final_times_list.append(result)
-            print (final_times_list)
+            #print (final_times_list)
 
-            # For loop to test if requested time is found (As input)
+            # For loop to test if requested time is found (As input) (or a 5-10 minute grace period)
             for i in range(len(final_times_list)):
-                if (final_times_list[i] == input_time):
+                if (final_times_list[i] == input_time or input_time - grace_period <= final_times_list[i] <= input_time + grace_period):
                     ride_time[i].click()
-                    print("Exact time identified!")
+                    print("Time identified! " + str(grace_period) + " minute grace period.")
                     time.sleep(1)
                     confirmTime()
-                    time.sleep(5)
+                    time.sleep(3)
                     #Ends program
                     driver.close()
                     quit()
@@ -183,7 +183,7 @@ try:
             time.sleep(3)
 
             #Modify loop
-            if j == 0:
+            if (j == 0):
                 no_thanks = driver.find_element_by_css_selector("div.ng-scope.button.next.primary")
                 no_thanks.click()
             time.sleep(2)
@@ -206,16 +206,16 @@ try:
             time.sleep(5)
 
         #common.exceptions.NoSuchElementException
-        except common.exceptions.NoSuchElementException:
-            print("Time/Element not found!")
+        except IndexError:
+            print("Times are not available!")
             driver.back()
-            time.sleep(2)
+            time.sleep(4)
 
         print("Cycle " + str(j + 1) + "/" + str(cycle_time) + " completed!")
     print("Completed repeating cycle!")
     driver.close()
 
 #common.exceptions.WebDriverException
-except TypeError:
+except common.exceptions.WebDriverException:
     print("Web Browser was closed unexpectedly!")
     driver.close()
