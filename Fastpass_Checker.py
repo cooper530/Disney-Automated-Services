@@ -21,6 +21,7 @@ def get_text_excluding_children(driver, element):
     }
     return ret;
     """, element)
+
 def takeClosest(myList, myNumber):
     """
     Assumes myList is sorted. Returns closest value to myNumber.
@@ -38,6 +39,7 @@ def takeClosest(myList, myNumber):
        return after
     else:
        return before
+
 def timeConversion(example):
     (h, m) = example.split(':')
     return int(h) * 60 + int(m)
@@ -114,6 +116,7 @@ try:
         ride_type = driver.find_elements_by_css_selector("div.name.ng-binding")
         for i in ride_type:
             name_actual = get_text_excluding_children(driver, i)
+            print(name_actual)
             if name_actual == ride:
                 i.click()
                 print ("Attraction Identified")
@@ -180,9 +183,10 @@ try:
             time.sleep(3)
 
             #Modify loop
-            no_thanks = driver.find_element_by_css_selector("div.ng-scope.button.next.primary")
-            no_thanks.click()
-            time.sleep(5)
+            if j == 0:
+                no_thanks = driver.find_element_by_css_selector("div.ng-scope.button.next.primary")
+                no_thanks.click()
+            time.sleep(2)
 
             #View details and modify section
             view_details = driver.find_element_by_css_selector("span.link.viewDetailLink.ng-scope")
@@ -201,9 +205,9 @@ try:
             view_more_times.click()
             time.sleep(5)
 
-        #
+        #common.exceptions.NoSuchElementException
         except common.exceptions.NoSuchElementException:
-            print("Time not found!")
+            print("Time/Element not found!")
             driver.back()
             time.sleep(2)
 
