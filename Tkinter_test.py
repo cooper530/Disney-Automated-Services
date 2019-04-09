@@ -2,14 +2,25 @@ import tkinter
 
 def submitData():
     print("Information submitted!")
+    print(park.get(park.curselection()))
+    quit()
 
 root = tkinter.Tk()
 root.title("Fastpass+ Selection")
-root.geometry("500x500")
-submit = tkinter.Button(root, text = "Submit", height=1,width=10, command=submitData)
+root.geometry("300x300")
 
-submit.place(x=400,y=470)
-# Code to add widgets will go here...
+#Create the widgets
+submit = tkinter.Button(root, text = "Submit",width=10, command=submitData)
+park = tkinter.Listbox (root)
+park.insert(1, "Magic Kingdom")
+park.insert(2, "EPCOT")
+park.insert(3, "Hollywood Studios")
+park.insert(4, "Animal Kingdom")
+
+
+#Place the widgets
+submit.place(rely=1.0, relx=1.0, x=0, y=0, anchor="se")
+park.pack()
 root.mainloop()
 
 
