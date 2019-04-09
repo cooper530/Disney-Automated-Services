@@ -203,7 +203,7 @@ try:
             #Finding ride times again
             view_more_times = driver.find_element_by_css_selector("div.clickable.ng-isolate-scope")
             view_more_times.click()
-            time.sleep(4)
+            time.sleep(3)
 
         #common.exceptions.NoSuchElementException
         except IndexError:
@@ -216,10 +216,13 @@ try:
 
     start_over = driver.find_element_by_css_selector("div.ng-scope.button.startOver.secondary")
     start_over.click()
-    time.sleep(2)
-    arrival_time = driver.find_element_by_css_selector("div.arrivalItemTime.one")
-    converted_arrival_time = get_text_excluding_children(driver, arrival_time)
-    print("Arrive between: " + converted_arrival_time)
+    time.sleep(3)
+    arrival_time = driver.find_elements_by_css_selector("span.time.ng-binding")
+    completed = []
+    for i in arrival_time:
+        converted_arrival_time = get_text_excluding_children(driver, i)
+        completed.append(converted_arrival_time)
+    print("Arrive between " + completed[0] + " - " + completed[1])
     driver.close()
 
 #common.exceptions.WebDriverException
