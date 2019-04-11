@@ -1,7 +1,14 @@
 import tkinter
 
+#Global vars
 parkFinal = ""
-monthFinal = 0
+month = 0
+day = 0
+park = ""
+ride = ""
+input_time = ''
+grace_period = 0
+cycle_time = 0
 
 #DO NOT EDIT THESE LISTS
 months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -15,20 +22,28 @@ rides_hws = ["Alien Swirling Saucers","Beauty and the Beast - Live on Stage","Di
 rides_ak = ["Avatar Flight of Passage","DINOSAUR","Expedition Everest - Legend of the Forbidden Mountain","Festival of the Lion King","Finding Nemo - The Musical","It's Tough to Be a Bug!","Kali River Rapids","Kilimanjaro Safaris","Meet Favorite Disney Pals at Adventurers Outpost","Na'vi River Journey","Primeval Whirl","Rivers of Light","UP! A Great Bird Adventure"]
 
 def submitData():
+    global month
+    global day
+    global park
+    global ride
+    global input_time
+    global grace_period
+    global cycle_time
     print("Information submitted!")
     print(parkFinal)
-    print(str(monthFinal))
+    print(str(month))
+    cycle_time = cycleEntry.get()
     quit()
 def getDate(value):
-    global monthFinal
+    global month
     dayShow = tkinter.StringVar(root)
     dayShow.set("Day Selection")
     for i in range(12):
         if(months[i] == value):
-            monthFinal = i+1
-    if monthFinal == 1 or monthFinal == 3 or monthFinal == 5 or monthFinal == 7 or monthFinal == 8 or monthFinal == 10 or monthFinal == 12:
+            month = i+1
+    if month == 1 or month == 3 or month == 5 or month == 7 or month == 8 or month == 10 or month == 12:
         daySelect = tkinter.OptionMenu(root, dayShow, *days_31)
-    elif monthFinal == 2:
+    elif month == 2:
         daySelect = tkinter.OptionMenu(root, dayShow, *days_28)
     else:
         daySelect = tkinter.OptionMenu(root, dayShow, *days_30)
@@ -76,10 +91,20 @@ monthShow = tkinter.StringVar(root)
 monthShow.set("Month Selection")
 month = tkinter.OptionMenu(root, monthShow, *months, command=getDate)
 
+cycleLabel = tkinter.Label(root, text="Cycle Times:")
+cycleEntry = tkinter.Entry(root, width=5)
+
+graceLabel = tkinter.Label(root, text="Grace Period:")
+graceEntry = tkinter.Spinbox(root, values=("Exact Time","No Period",5,10,15,20,25,30,35,40,45,50,55,60), width=10)
+
 #Place the widgets
 submit.place(rely=1.0, relx=1.0, x=0, y=0, anchor="se")
 park.place(x=10.0,y=10.0)
 month.place(x=160.0,y=10.0)
+graceLabel.place(x=10,y=250)
+graceEntry.place(x=90,y=250)
+cycleLabel.place(x=10,y=280)
+cycleEntry.place(x=90,y=280)
 root.mainloop()
 
 
