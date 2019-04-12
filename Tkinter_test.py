@@ -1,7 +1,6 @@
 import tkinter
 
 #Global vars
-parkFinal = ""
 month = 0
 day = 0
 park = ""
@@ -29,10 +28,19 @@ def submitData():
     global input_time
     global grace_period
     global cycle_time
+    global rideSelect
+    #if park == "" or ride == "" or month == 0 or input_time == "Error!":
     print("Information submitted!")
-    print(parkFinal)
-    print(str(month))
+    print(park)
+    print(ride)
+    print(month)
+    print(day)
+    if park == "mk" or park == "epcot" or park == "hws" or park == "ak":
+        print(properTime(hourSelect.get(),minuteSelect.get(),todSelect.get()))
+    grace_period = graceEntry.get()
     cycle_time = cycleEntry.get()
+    print(cycle_time)
+    print(grace_period)
     quit()
 def getDate(value):
     global month
@@ -42,31 +50,49 @@ def getDate(value):
         if(months[i] == value):
             month = i+1
     if month == 1 or month == 3 or month == 5 or month == 7 or month == 8 or month == 10 or month == 12:
-        daySelect = tkinter.OptionMenu(root, dayShow, *days_31)
+        daySelect = tkinter.OptionMenu(root, dayShow, *days_31, command=getDay)
     elif month == 2:
-        daySelect = tkinter.OptionMenu(root, dayShow, *days_28)
+        daySelect = tkinter.OptionMenu(root, dayShow, *days_28, command=getDay)
     else:
-        daySelect = tkinter.OptionMenu(root, dayShow, *days_30)
+        daySelect = tkinter.OptionMenu(root, dayShow, *days_30, command=getDay)
 
     daySelect.place(x=160.0, y=40.0)
-
+def getDay(value):
+    global day
+    day = value
+def getRide(value):
+    global ride
+    ride = value
+def properTime(hour, minute, tod):
+    global input_time
+    #if int(hour) > 12 or int(minute) > 59:
+    #else:
+    if 0 < int(minute) < 10:
+        input_time = hour + ":" + "0" + minute + tod
+    else:
+        input_time = hour + ":" + minute + tod
+    return input_time
 def testRide(value):
-    global parkFinal
-    parkFinal = value
+    global park
+    global hourSelect
+    global minuteSelect
+    global todSelect
+    park = value
     rideSelectShow = tkinter.StringVar(root)
     rideSelectShow.set("Ride Selection")
 
     hourSelect = tkinter.Spinbox(root, from_=1, to=12, width=5)
     minuteSelect = tkinter.Spinbox(root, from_=1, to=59, width=5)
     todSelect = tkinter.Spinbox(root,values= ("AM","PM"), width=5)
-    if parkFinal == "mk":
-        rideSelect = tkinter.OptionMenu(root, rideSelectShow, *rides_mk)
-    elif parkFinal == "epcot":
-        rideSelect = tkinter.OptionMenu(root, rideSelectShow, *rides_epcot)
-    elif parkFinal == "hws":
-        rideSelect = tkinter.OptionMenu(root, rideSelectShow, *rides_hws)
-    elif parkFinal == "ak":
-        rideSelect = tkinter.OptionMenu(root, rideSelectShow, *rides_ak)
+
+    if park == "mk":
+        rideSelect = tkinter.OptionMenu(root, rideSelectShow, *rides_mk, command=getRide)
+    elif park == "epcot":
+        rideSelect = tkinter.OptionMenu(root, rideSelectShow, *rides_epcot, command=getRide)
+    elif park == "hws":
+        rideSelect = tkinter.OptionMenu(root, rideSelectShow, *rides_hws, command=getRide)
+    elif park == "ak":
+        rideSelect = tkinter.OptionMenu(root, rideSelectShow, *rides_ak, command=getRide)
 
     hourSelect.pack_forget()
     minuteSelect.pack_forget()
