@@ -2,8 +2,7 @@ import time
 from InputWindow import *
 if mode == 1:
     from FastpassData import *
-from selenium import webdriver
-from selenium import common
+from selenium import webdriver, common
 import datetime
 from bisect import bisect_left
 
