@@ -29,19 +29,46 @@ def submitData():
     global grace_period
     global cycle_time
     global rideSelect
-    #if park == "" or ride == "" or month == 0 or input_time == "Error!":
-    print("Information submitted!")
-    print(park)
-    print(ride)
-    print(month)
-    print(day)
+
     if park == "mk" or park == "epcot" or park == "hws" or park == "ak":
-        print(properTime(hourSelect.get(),minuteSelect.get(),todSelect.get()))
-    grace_period = graceEntry.get()
-    cycle_time = cycleEntry.get()
-    print(cycle_time)
-    print(grace_period)
-    quit()
+        properTime(hourSelect.get(), minuteSelect.get(), todSelect.get())
+
+    if park == "" or ride == "" or month == 0 or input_time == "Error!" or day == 0:
+        popupmsg()
+
+    else:
+        print("Information submitted!")
+        #print(park)
+        #print(ride)
+        #print(month)
+        #print(day)
+
+        input_time = convert_to_24(input_time)
+        (h, m) = input_time.split(':')
+        input_time = int(h) * 60 + int(m)
+
+        cycle_time = int(cycleEntry.get())
+
+        #print(cycle_time)
+        if graceEntry.get() == "No Period":
+            grace_period = 1440
+        elif graceEntry.get() == "Exact Time":
+            grace_period = 0
+        else:
+            grace_period = int(graceEntry.get())
+        #print(grace_period)
+        root.destroy()
+def popupmsg():
+    global popup
+    popup = tkinter.Tk()
+    popup.wm_title("Error!")
+    label = tkinter.Label(popup, text="Please enter all specified information!")
+    label.pack(side="top", fill="x", pady=10)
+    B1 = tkinter.Button(popup, text="Okay",command=buttonClose)
+    B1.pack()
+    popup.mainloop()
+def buttonClose():
+    popup.destroy()
 def getDate(value):
     global month
     dayShow = tkinter.StringVar(root)
@@ -65,13 +92,30 @@ def getRide(value):
     ride = value
 def properTime(hour, minute, tod):
     global input_time
-    #if int(hour) > 12 or int(minute) > 59:
-    #else:
-    if 0 < int(minute) < 10:
-        input_time = hour + ":" + "0" + minute + tod
+    if int(hour) > 12 or int(minute) > 59:
+        input_time = "Error!"
+        return input_time
     else:
-        input_time = hour + ":" + minute + tod
-    return input_time
+        if 0 < int(minute) < 10:
+            input_time = hour + ":" + "0" + minute + tod
+        else:
+            input_time = hour + ":" + minute + tod
+        return input_time
+def convert_to_24(time):
+    """Converts 12 hours time format to 24 hours
+    """
+    time = time.replace(' ', '')
+    time, half_day = time[:-2], time[-2:].lower()
+    if half_day == 'am':
+        return time
+    elif half_day == 'pm':
+        split = time.find(':')
+        if split == -1:
+            split = None
+        return str(int(time[:split]) + 12) + time[split:]
+    else:
+        raise ValueError("Didn't finish with AM or PM.")
+
 def testRide(value):
     global park
     global hourSelect

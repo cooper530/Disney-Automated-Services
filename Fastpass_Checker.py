@@ -1,5 +1,5 @@
 import time
-from Fastpass_Information import *
+from InputWindow import *
 from selenium import webdriver
 from selenium import common
 import datetime
@@ -107,7 +107,7 @@ try:
         park_find[2].click()
     elif (park == "ak"):
         park_find[3].click()
-    time.sleep(5)
+    time.sleep(6)
 
     #BEGIN CYCLE TIME
     for j in range(cycle_time):
@@ -209,7 +209,7 @@ try:
         except IndexError:
             print("Times are not available!")
             driver.back()
-            time.sleep(2)
+            time.sleep(4)
 
         print("Cycle " + str(j + 1) + "/" + str(cycle_time) + " completed!")
     print("Completed repeating cycle!")
@@ -226,6 +226,6 @@ try:
     driver.close()
 
 #common.exceptions.WebDriverException
-except TypeError:
+except common.exceptions.WebDriverException:
     print("Web Browser was closed unexpectedly!")
     driver.close()
