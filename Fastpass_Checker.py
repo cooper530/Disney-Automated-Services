@@ -1,5 +1,7 @@
 import time
 from InputWindow import *
+if mode == 1:
+    from FastpassData import *
 from selenium import webdriver
 from selenium import common
 import datetime
@@ -7,7 +9,6 @@ from bisect import bisect_left
 
 d = datetime.date.today()
 current_month = d.month
-password = "mmc4four"
 
 def get_text_excluding_children(driver, element):
     return driver.execute_script("""
@@ -47,14 +48,6 @@ def confirmTime():
     confirm_selection = driver.find_element_by_css_selector("div.ng-scope.button.confirm.tertiary")
     confirm_selection.click()
 
-'''
-#INPUTS
-month = int(input("Enter desired month (numerical form): "))
-day = int(input("Enter desired day (numerical form): "))
-park = input("Enter park (mk, epcot, ak, hws): ")
-ride = input("Enter ride specified: ")
-'''
-
 #Finds what day of the week the day is
 month_click = month - current_month
 
@@ -70,7 +63,7 @@ pswd = driver.find_element_by_name("password")
 submit = driver.find_element_by_name("submit")
 
 #Enter the keys
-username.send_keys("mmc.4@comcast.net")
+username.send_keys(user_input)
 pswd.send_keys(password)
 submit.click()
 time.sleep(5)

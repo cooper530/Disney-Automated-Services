@@ -8,6 +8,8 @@ ride = ""
 input_time = ''
 grace_period = 0
 cycle_time = 0
+user_input = ""
+password = ""
 
 #DO NOT EDIT THESE LISTS
 months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -29,6 +31,8 @@ def submitData():
     global grace_period
     global cycle_time
     global rideSelect
+    global user_input
+    global password
 
     if park == "mk" or park == "epcot" or park == "hws" or park == "ak":
         properTime(hourSelect.get(), minuteSelect.get(), todSelect.get())
@@ -42,7 +46,8 @@ def submitData():
         #print(ride)
         #print(month)
         #print(day)
-
+        user_input = str(userEntry.get())
+        password = str(passwordEntry.get())
         input_time = convert_to_24(input_time)
         (h, m) = input_time.split(':')
         input_time = int(h) * 60 + int(m)
@@ -69,6 +74,8 @@ def popupmsg():
     popup.mainloop()
 def buttonClose():
     popup.destroy()
+def selectionClose():
+    selection.destroy()
 def getDate(value):
     global month
     dayShow = tkinter.StringVar(root)
@@ -146,37 +153,64 @@ def testRide(value):
     minuteSelect.place(x=60.0, y=45.0)
     todSelect.place(x=110.0, y=45.0)
 
+selection = tkinter.Tk()
+selection.title("Fastpass+ Selection")
+submitB = tkinter.Button(selection, text = "Submit",width=10, command=selectionClose)
+submitB.pack()
+var = tkinter.IntVar()
+R1 = tkinter.Radiobutton(selection, text="From other python file", variable=var, value=1)
+R1.pack(anchor = "w" )
+R2 = tkinter.Radiobutton(selection, text="From GUI Interface", variable=var, value=2)
+R2.pack(anchor = "w" )
+selection.mainloop()
 
-root = tkinter.Tk()
-root.title("Fastpass+ Selection")
-root.geometry("300x300")
+if var.get() == 1:
+    print("Launching browser...")
+    mode = 1
+else:
+    mode = 2
+    root = tkinter.Tk()
+    root.title("Fastpass+ Selection")
+    root.geometry("300x300")
 
-#Create the widgets
-submit = tkinter.Button(root, text = "Submit",width=10, command=submitData)
+    #Create the widgets
+    submit = tkinter.Button(root, text = "Submit",width=10, command=submitData)
 
-parkShow = tkinter.StringVar(root)
-parkShow.set("Park Selection")
-park = tkinter.OptionMenu(root, parkShow, "mk", "epcot", "hws", "ak", command=testRide)
+    parkShow = tkinter.StringVar(root)
+    parkShow.set("Park Selection")
+    park = tkinter.OptionMenu(root, parkShow, "mk", "epcot", "hws", "ak", command=testRide)
 
-monthShow = tkinter.StringVar(root)
-monthShow.set("Month Selection")
-month = tkinter.OptionMenu(root, monthShow, *months, command=getDate)
+    monthShow = tkinter.StringVar(root)
+    monthShow.set("Month Selection")
+    month = tkinter.OptionMenu(root, monthShow, *months, command=getDate)
 
-cycleLabel = tkinter.Label(root, text="Cycle Times:")
-cycleEntry = tkinter.Entry(root, width=5)
+    cycleLabel = tkinter.Label(root, text="Cycle Times:")
+    cycleEntry = tkinter.Entry(root, width=5)
 
-graceLabel = tkinter.Label(root, text="Grace Period:")
-graceEntry = tkinter.Spinbox(root, values=("Exact Time","No Period",5,10,15,20,25,30,35,40,45,50,55,60), width=10)
+    userLabel = tkinter.Label(root, text="Username:")
+    userEntry = tkinter.Entry(root)
 
-#Place the widgets
-submit.place(rely=1.0, relx=1.0, x=0, y=0, anchor="se")
-park.place(x=10.0,y=10.0)
-month.place(x=160.0,y=10.0)
-graceLabel.place(x=10,y=250)
-graceEntry.place(x=90,y=250)
-cycleLabel.place(x=10,y=280)
-cycleEntry.place(x=90,y=280)
-root.mainloop()
+    passwordLabel = tkinter.Label(root, text="Password:")
+    passwordEntry = tkinter.Entry(root, show="*")
+
+    graceLabel = tkinter.Label(root, text="Grace Period:")
+    graceEntry = tkinter.Spinbox(root, values=("Exact Time","No Period",5,10,15,20,25,30,35,40,45,50,55,60), width=10)
+
+    #Place the widgets
+    submit.place(rely=1.0, relx=1.0, x=0, y=0, anchor="se")
+    park.place(x=10.0,y=10.0)
+    month.place(x=160.0,y=10.0)
+
+    graceLabel.place(x=10,y=250)
+    graceEntry.place(x=90,y=250)
+    cycleLabel.place(x=10,y=280)
+    cycleEntry.place(x=90,y=280)
+
+    userLabel.place(x=10, y=150)
+    userEntry.place(x=90, y=150)
+    passwordLabel.place(x=10, y=180)
+    passwordEntry.place(x=90, y=180)
+    root.mainloop()
 
 
 
