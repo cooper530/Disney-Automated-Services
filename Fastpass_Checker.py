@@ -89,7 +89,7 @@ try:
             break
 
     #Park Screen
-    time.sleep(2.25)
+    time.sleep(3)
     park_find = driver.find_elements_by_css_selector("div.park.ng-scope")
     if (park == "mk"):
         park_find[0].click()
@@ -109,8 +109,6 @@ try:
         ride_type = driver.find_elements_by_css_selector("div.name.ng-binding")
         for a_ride in ride_type:
             name_actual = get_text_excluding_children(driver, a_ride)
-            print("Name Actual: " + name_actual)
-            print("Ride: " + ride)
             if name_actual == ride:
                 a_ride.click()
                 print ("Attraction Identified")
@@ -166,11 +164,30 @@ try:
             #print ("Closest time:" + str(close_time))
 
             # Searches for alternate time
+            not_found = False
             for i in range(len(final_times_list)):
-                if (final_times_list[i] == close_time):
-                    ride_time[i].click()
-                    print ("Alternate Time Identified")
-                    break
+                #processed_time <= close_time <= input_time or input_time <= close_time <= processed_time
+                if (j==0):
+                    if (final_times_list[i] == close_time):
+                        processed_time = final_times_list[i]
+                        ride_time[i].click()
+                        print ("Alternate Time Identified")
+                        break
+                if (j>0):
+                    if final_times_list[i] == close_time and (processed_time <= close_time <= input_time or input_time <= close_time <= processed_time):
+                        processed_time = final_times_list[i]
+                        ride_time[i].click()
+                        not_found = False
+                        print ("Alternate Time Identified")
+                        break
+                    else:
+                        not_found = True
+                        print("No times were closer to desired time.")
+                        driver.back()
+                        time.sleep(4)
+                        break
+            if not_found:
+                continue
             time.sleep(1)
 
             # Confirm Time Selection (DO NOT CHANGE)
@@ -217,7 +234,10 @@ try:
     for i in arrival_time:
         converted_arrival_time = get_text_excluding_children(driver, i)
         completed.append(converted_arrival_time)
-    print("Arrive between " + completed[0] + " - " + completed[1])
+    try:
+        print("Arrive between " + completed[0] + " - " + completed[1])
+    except IndexError:
+        print("No time found!")
     driver.close()
 
 #common.exceptions.WebDriverException
