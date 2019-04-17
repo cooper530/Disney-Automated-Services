@@ -197,6 +197,7 @@ else:
     graceEntry = tkinter.Spinbox(root, values=("Exact Time","No Period",5,10,15,20,25,30,35,40,45,50,55,60), width=10)
 
     #Place the widgets
+
     submit.place(rely=1.0, relx=1.0, x=0, y=0, anchor="se")
     park.place(x=10.0,y=10.0)
     month.place(x=160.0,y=10.0)
