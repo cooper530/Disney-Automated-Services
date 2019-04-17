@@ -103,13 +103,16 @@ try:
 
     #BEGIN CYCLE TIME
     for j in range(cycle_time):
+        global ride
         print("Beginning analysis")
         # Ride screen
         ride_type = driver.find_elements_by_css_selector("div.name.ng-binding")
-        for i in ride_type:
-            name_actual = get_text_excluding_children(driver, i)
+        for a_ride in ride_type:
+            name_actual = get_text_excluding_children(driver, a_ride)
+            print("Name Actual: " + name_actual)
+            print("Ride: " + ride)
             if name_actual == ride:
-                i.click()
+                a_ride.click()
                 print ("Attraction Identified")
                 break
         time.sleep(3)
