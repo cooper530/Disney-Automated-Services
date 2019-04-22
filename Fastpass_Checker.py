@@ -68,10 +68,24 @@ submit.click()
 time.sleep(5)
 try:
     #Select Party Page
-    select_all = driver.find_element_by_css_selector("div.link.selectAll.clickable.ng-isolate-scope")
-    select_all.click()
-    next = driver.find_element_by_css_selector("div.ng-scope.button.next.primary")
-    next.click()
+    if not people_pick:
+        print("Automatic Selection")
+        select_all = driver.find_element_by_css_selector("div.link.selectAll.clickable.ng-isolate-scope")
+        select_all.click()
+        next = driver.find_element_by_css_selector("div.ng-scope.button.next.primary")
+        next.click()
+    elif people_pick:
+        print("Pick your guests")
+        next = driver.find_element_by_css_selector("div.ng-scope.button.next.primary")
+        complete = False
+        while not complete:
+            try:
+                #Never going to be turned true, only placeholder for except error
+                if next.is_selected():
+                    complete = True
+            except common.exceptions.StaleElementReferenceException:
+                break
+
     time.sleep(2)
 
     #Month Screen
@@ -90,15 +104,20 @@ try:
 
     #Park Screen
     time.sleep(3)
-    park_find = driver.find_elements_by_css_selector("div.park.ng-scope")
-    if (park == "mk"):
-        park_find[0].click()
-    elif (park == "epcot"):
-        park_find[1].click()
-    elif (park == "hws"):
-        park_find[2].click()
-    elif (park == "ak"):
-        park_find[3].click()
+    try:
+        park_find = driver.find_elements_by_css_selector("div.park.ng-scope")
+        if (park == "mk"):
+            park_find[0].click()
+        elif (park == "epcot"):
+            park_find[1].click()
+        elif (park == "hws"):
+            park_find[2].click()
+        elif (park == "ak"):
+            park_find[3].click()
+    except IndexError:
+        print("Date not reachable!")
+        driver.close()
+
     time.sleep(6)
 
     #BEGIN CYCLE TIME
@@ -200,10 +219,30 @@ try:
                 no_thanks.click()
             time.sleep(2)
 
+            #Find the ride from earlier
+            '''
+            STILL WORKING ON THIS PART
+            month_and_year = driver.find_elements_by_css_selector("div.listing.ng-scope")
+            may_list = []
+            print(month_and_year)
+            for i in month_and_year:
+                converted_time = get_text_excluding_children(driver, i)
+                print(converted_time)
+                may_list.append(converted_time)
+            print(may_list)
+            '''
+
+
+            #Finds ride from the same day (Need to find same day also)
+            ride_reload = driver.find_elements_by_css_selector("h3.ng-binding")
+            for a_ride in ride_reload:
+                name_actual = get_text_excluding_children(driver, a_ride)
+                if name_actual == ride:
+                    a_ride.click()
+                    print("Attraction Re-Identified")
+                    break
+            time.sleep(.25)
             #View details and modify section
-            view_details = driver.find_element_by_css_selector("span.link.viewDetailLink.ng-scope")
-            view_details.click()
-            time.sleep(.5)
             modify = driver.find_element_by_css_selector("div.icon.edit.ng-scope.large")
             modify.click()
             time.sleep(1)
@@ -234,10 +273,6 @@ try:
     for i in arrival_time:
         converted_arrival_time = get_text_excluding_children(driver, i)
         completed.append(converted_arrival_time)
-    try:
-        print("Arrive between " + completed[0] + " - " + completed[1])
-    except IndexError:
-        print("No time found!")
     driver.close()
 
 #common.exceptions.WebDriverException

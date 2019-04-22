@@ -23,3 +23,6 @@ grace_period = 0
 
 #How many times the system looks for the desired Fastpass
 cycle_time = 0
+
+#If you would like to pick people yourself (True) or select all guests automatically (False)
+people_pick = False
