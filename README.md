@@ -31,8 +31,3 @@ Enter all information in the FastpassData.py file beforehand to use this method.
 
 This program was created by [Jmandarino](https://github.com/Jmandarino). I did not create this program
 so all information pertaining to it can be found [here](https://github.com/Jmandarino/Disney-Reservation-Checker)
-
-##DVC Resale Checker
-
-This program goes through a number of Disney Vacation Club Resale websites to find
-a suitable match with a number of parameters. **This program is still a work in progress!**
