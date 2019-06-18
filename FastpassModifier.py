@@ -43,19 +43,19 @@ def confirmTime():
     confirm_selection.click()
 
 #Input
-user_input = input("Username: ")
-password = input("Password: ")
+
+#HARD CODED FOR AUGUST TRIP, CHANGE LATER
+#user_input = input("Username: ")
+#password = input("Password: ")
+
+user_input = "mmc.4@comcast.net"
+password = "mmc4four"
 
 #What website to access
 driver = webdriver.Chrome()
-driver.get("https://disneyworld.disney.go.com/fastpass-plus/")
+driver.get("https://disneyworld.disney.go.com/login/?returnUrl=/fastpass-plus/logged-in/")
 #driver.maximize_window()
 time.sleep(2)
-
-#Finds elements by key
-signIn = driver.find_element_by_css_selector("div.ng-scope.button.next.primary")
-signIn.click()
-time.sleep(1.5)
 
 username = driver.find_element_by_name("username")
 pswd = driver.find_element_by_name("password")
@@ -67,29 +67,42 @@ pswd.send_keys(password)
 submit.click()
 time.sleep(5)
 
-view = driver.find_element_by_css_selector("span.link.viewDetailLink.ng-scope")
-print(get_text_excluding_children(driver, view))
+'''
 complete = False
 while not complete:
+    print("Hi")
+    time.sleep(1)
+    
     try:
         #Never going to be turned true, only placeholder for except error
         if view.is_selected():
             complete = True
     except common.exceptions.StaleElementReferenceException:
         break
+'''
 
-print("Selected!")
+#10 second timer
+for i in range(10):
+    print(i + 1)
+    time.sleep(1)
+
 
 #View details and modify section
-modify = driver.find_element_by_css_selector("div.icon.edit.ng-scope.large")
-modify.click()
-time.sleep(1)
-select_all_modify = driver.find_element_by_css_selector("div.link.selectAll.clickable.ng-isolate-scope")
-next_modify = driver.find_element_by_css_selector("div.ng-scope.button.next.primary")
-select_all_modify.click()
-next_modify.click()
-time.sleep(1)
-#Finding ride times again
-view_more_times = driver.find_element_by_css_selector("div.clickable.ng-isolate-scope")
-view_more_times.click()
-time.sleep(3)
+try:
+    print("Modifying...")
+    modify = driver.find_element_by_css_selector("div.icon.edit.ng-scope.large")
+    modify.click()
+    time.sleep(1)
+    select_all_modify = driver.find_element_by_css_selector("div.link.selectAll.clickable.ng-isolate-scope")
+    next_modify = driver.find_element_by_css_selector("div.ng-scope.button.next.primary")
+    select_all_modify.click()
+    next_modify.click()
+    time.sleep(5)
+    #Finding ride times again
+    view_more_times = driver.find_element_by_css_selector("div.clickable.ng-isolate-scope")
+    print(get_text_excluding_children(driver, view_more_times))
+    view_more_times.click()
+    time.sleep(3)
+except common.exceptions.NoSuchElementException:
+    print("You did not click a Fastpass+ Selection in time!")
+    driver.close()

@@ -66,6 +66,7 @@ username.send_keys(user_input)
 pswd.send_keys(password)
 submit.click()
 time.sleep(5)
+
 try:
     #Select Party Page
     if not people_pick:
@@ -137,6 +138,8 @@ try:
         #Find and select the time of the ride
         ride_time = driver.find_elements_by_css_selector("span.hour.ng-binding")
         am_or_pm = driver.find_elements_by_css_selector("span.ampm.ng-binding")
+        overlapTime = driver.find_elements_by_css_selector("div.availableTime.ng-scope.hasTimeOverlap")
+        availableTime = driver.find_elements_by_css_selector("div.availableTime.ng-scope")
 
         try:
 
@@ -148,6 +151,28 @@ try:
                 ams_pms = get_text_excluding_children(driver, i)
                 time_of_day.append(ams_pms)
             #print(time_of_day)
+
+            #Checks for any times that overlap with other fastpasses
+            availableTimeList = []
+            for i in availableTime:
+                # overlaps = get_text_excluding_children(driver, i)
+                availableTimeList.append(i)
+            #print(availableTimeList)
+
+            overlapTimeList = []
+            for i in overlapTime:
+                #overlaps = get_text_excluding_children(driver, i)
+                overlapTimeList.append(i)
+            #print(overlapTimeList)
+
+            #Compares the two lists and creates a true false list
+            ability_list = []
+            for element in availableTimeList:
+                if element in overlapTimeList:
+                    ability_list.append(False)
+                else:
+                    ability_list.append(True)
+            print(ability_list)
 
             # Converts all the times into minutes
             ride_time_actual = []
@@ -165,9 +190,17 @@ try:
                 final_times_list.append(result)
             #print (final_times_list)
 
+            counter = 0
+            for i in range(len(ability_list)):
+                #print(i)
+                if ability_list[i] is False:
+                    final_times_list.remove(final_times_list[i - counter])
+                    counter += 1
+                #print(final_times_list)
+
             # For loop to test if requested time is found (As input) (or a 5-10 minute grace period)
             for i in range(len(final_times_list)):
-                if (final_times_list[i] == input_time or input_time - grace_period <= final_times_list[i] <= input_time + grace_period):
+                if ((final_times_list[i] == input_time or input_time - grace_period <= final_times_list[i] <= input_time + grace_period)):
                     ride_time[i].click()
                     print("Time identified! " + str(grace_period) + " minute grace period.")
                     time.sleep(1)
@@ -257,7 +290,7 @@ try:
             time.sleep(3)
 
         #common.exceptions.NoSuchElementException
-        except IndexError:
+        except common.exceptions.NoSuchElementException:
             print("Times are not available!")
             driver.back()
             time.sleep(4)

@@ -53,8 +53,14 @@ def submitData():
         #print(ride)
         #print(month)
         #print(day)
-        user_input = str(userEntry.get())
-        password = str(passwordEntry.get())
+
+        #CHANGED FOR AUGUST TRIP, REVERT LATER
+        #user_input = str(userEntry.get())
+        #password = str(passwordEntry.get())
+
+        user_input = "mmc.4@comcast.net"
+        password = "mmc4four"
+
         input_time = convert_to_24(input_time)
         (h, m) = input_time.split(':')
         input_time = int(h) * 60 + int(m)
