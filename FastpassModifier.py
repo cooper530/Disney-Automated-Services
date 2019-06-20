@@ -1,8 +1,15 @@
 #Changes Fastpass to a designated time.
 
 import time
+import tkinter
 from selenium import webdriver, common
 from bisect import bisect_left
+
+month = 0
+day = 0
+input_time = ''
+user_input = ""
+password = ""
 
 def convert_to_24(time):
     """Converts 12 hours time format to 24 hours
@@ -53,23 +60,95 @@ def takeClosest(myList, myNumber):
 def timeConversion(example):
     (h, m) = example.split(':')
     return int(h) * 60 + int(m)
+def popupmsg():
+    global popup
+    popup = tkinter.Tk()
+    popup.wm_title("Error!")
+    label = tkinter.Label(popup, text="Please enter all specified information!")
+    label.pack(side="top", fill="x", pady=10)
+    B1 = tkinter.Button(popup, text="Okay",command=buttonClose)
+    B1.pack()
+    popup.mainloop()
+def buttonClose():
+    popup.destroy()
 def confirmTime():
     confirm_selection = driver.find_element_by_css_selector("div.ng-scope.button.confirm.tertiary")
     confirm_selection.click()
+def properTime(hour, minute, tod):
+    global input_time
+    if int(hour) > 12 or int(minute) > 59:
+        input_time = "Error!"
+        return input_time
+    else:
+        if 0 < int(minute) < 10:
+            input_time = hour + ":" + "0" + minute + tod
+        else:
+            input_time = hour + ":" + minute + tod
+        return input_time
+def submitData():
+    global input_time
+    global cycle_time
+    global user_input
+    global password
+
+    input_time = properTime(hourSelect.get(), minuteSelect.get(), todSelect.get())
+    cycle_time = int(cycleEntry.get())
+    user_input = str(userEntry.get())
+    password = str(passwordEntry.get())
+
+    #print(input_time)
+    if input_time == "Error!":
+        popupmsg()
+    else:
+        root.destroy()
 
 #Input
+root = tkinter.Tk()
+root.title("Fastpass+ Modifier")
+root.geometry("300x300")
 
-#HARD CODED FOR AUGUST TRIP, CHANGE LATER
-#user_input = input("Username: ")
-#password = input("Password: ")
+submit = tkinter.Button(root, text = "Submit",width=10, command=submitData)
 
-user_input = "mmc.4@comcast.net"
-password = "mmc4four"
-input_time = input("Enter Time: ")
+cycleLabel = tkinter.Label(root, text="Cycle Times:")
+cycleEntry = tkinter.Entry(root, width=5)
+
+userLabel = tkinter.Label(root, text="Username:")
+userEntry = tkinter.Entry(root)
+
+passwordLabel = tkinter.Label(root, text="Password:")
+passwordEntry = tkinter.Entry(root, show="*")
+
+infoLabel = tkinter.Label(root, text="You will have 10 seconds to make your selection")
+infoLabel2 = tkinter.Label(root, text="when the program reaches the Fastpass+ screen.")
+submit.place(rely=1.0, relx=1.0, x=0, y=0, anchor="se")
+cycleLabel.place(x=10,y=280)
+cycleEntry.place(x=90,y=280)
+
+infoLabel.place(x=10,y=190)
+infoLabel2.place(x=10,y=210)
+
+hourSelect = tkinter.Spinbox(root, from_=1, to=12, width=5)
+minuteSelect = tkinter.Spinbox(root, from_=1, to=59, width=5)
+todSelect = tkinter.Spinbox(root,values= ("AM","PM"), width=5)
+
+userLabel.place(x=10, y=120)
+userEntry.place(x=90, y=120)
+passwordLabel.place(x=10, y=150)
+passwordEntry.place(x=90, y=150)
+hourSelect.pack_forget()
+minuteSelect.pack_forget()
+hourSelect.place(x=80.0, y=45.0)
+minuteSelect.place(x=130.0, y=45.0)
+todSelect.place(x=180.0, y=45.0)
+
+root.mainloop()
+#ENDS POPUP WINDOW PROGRAM
+
 input_time = convert_to_24(input_time)
 (h, m) = input_time.split(':')
 input_time = int(h) * 60 + int(m)
-cycle_time = 3
+
+
 
 #What website to access
 driver = webdriver.Chrome()
@@ -102,7 +181,7 @@ while not complete:
 '''
 
 #10 second timer
-for i in range(10):
+for i in range(5):
     print(i + 1)
     time.sleep(1)
 
@@ -110,9 +189,22 @@ for i in range(10):
 #View details and modify section
 try:
     for j in range(cycle_time):
+        time.sleep(5)
+
         print("Modifying...")
-        ride = driver.find_element_by_css_selector("h3.ng-binding")
-        ride = get_text_excluding_children(driver, ride)
+        if j == 0:
+            ride = driver.find_element_by_css_selector("h3.ng-binding")
+            ride = get_text_excluding_children(driver, ride)
+        else:
+            ride_reload = driver.find_elements_by_css_selector("h3.ng-binding")
+            for a_ride in ride_reload:
+                name_actual = get_text_excluding_children(driver, a_ride)
+                if name_actual == ride:
+                    a_ride.click()
+                    print("Attraction Re-Identified")
+                    break
+            time.sleep(.25)
+
         modify = driver.find_element_by_css_selector("div.icon.edit.ng-scope.large")
         modify.click()
         time.sleep(1)
@@ -165,7 +257,7 @@ try:
                     ability_list.append(False)
                 else:
                     ability_list.append(True)
-            print(ability_list)
+            #print(ability_list)
 
             # Converts all the times into minutes
             ride_time_actual = []
@@ -248,3 +340,5 @@ try:
 except common.exceptions.NoSuchElementException:
     print("You did not click a Fastpass+ Selection in time!")
     driver.close()
+
+driver.close()

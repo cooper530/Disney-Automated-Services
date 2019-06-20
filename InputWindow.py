@@ -75,6 +75,7 @@ def submitData():
         else:
             grace_period = int(graceEntry.get())
         #print(grace_period)
+        #print(input_time)
         root.destroy()
 def popupmsg():
     global popup
